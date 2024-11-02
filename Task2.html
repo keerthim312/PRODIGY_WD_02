@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Stopwatch</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .stopwatch {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 200px;
+        }
+
+        .time {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="stopwatch">
+    <div class="time" id="display">00:00:00</div>
+    <button id="startStopBtn">Start</button>
+    <button id="resetBtn" disabled>Reset</button>
+</div>
+<script>
+    let startTime = 0;
+    let elapsedTime = 0;
+    let intervalId;
+    let isRunning = false;
+    const display = document.getElementById("display");
+    const startStopBtn = document.getElementById("startStopBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    function formatTime(ms) {
+        let seconds = Math.floor((ms / 1000) % 60).toString().padStart(2, "0");
+        let minutes = Math.floor((ms / 60000) % 60).toString().padStart(2, "0");
+        let hours = Math.floor((ms / 3600000)).toString().padStart(2, "0");
+        return `${hours}:${minutes}:${seconds}`;
+    }
+    function updateDisplay() {
+        const now = Date.now();
+        elapsedTime = now - startTime;
+        display.textContent = formatTime(elapsedTime);
+    }
+    function startStop() {
+        if (!isRunning) {
+            isRunning = true;
+            startStopBtn.textContent = "Stop";
+            resetBtn.disabled = false;
+            startTime = Date.now() - elapsedTime;
+            intervalId = setInterval(updateDisplay, 1000);
+        } else {
+            isRunning = false;
+            startStopBtn.textContent = "Start";
+            clearInterval(intervalId);
+        }
+    }
+    function reset() {
+        isRunning = false;
+        clearInterval(intervalId);
+        elapsedTime = 0;
+        display.textContent = "00:00:00";
+        startStopBtn.textContent = "Start";
+        resetBtn.disabled = true;
+    }
+    startStopBtn.addEventListener("click", startStop);
+    resetBtn.addEventListener("click", reset);
+</script>
+</body>
+</html>
